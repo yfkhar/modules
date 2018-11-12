@@ -1,3 +1,4 @@
+require_relative 'external_module'
 # First Way: Mixin
 #
 # A Module is a collection of methods and constants. The methods in a module may
@@ -7,7 +8,9 @@
 # while instance methods may not
 # source: https://ruby-doc.org/core-2.5.3/Module.html
 module A
+  # A::VERSION
   VERSION = '0.0.1'.freeze
+
   # instance method => Class.new.mod_a
   def mod_a
     'instance method called from module A'
@@ -30,7 +33,7 @@ end
 # checkin the K class ancestors
 p K.ancestors
 
-# Check
+# Inspecting nesting
 # class
 p K.instance_methods.include? :mod_a
 # module
@@ -50,18 +53,62 @@ p A.version
 # into smaller ones and lets you mix and match object behaviors.
 
 module C
-  CONST = "Module #{self}"
+  # C::CONST
+  CONST = "Module #{self}".freeze
   # module nested inside the module C => C::D
   module D
-    CONST = "Module #{self}"
+    # C::D::CONST
+    CONST = "Module #{self}".freeze
 
-    def mod_d
+    def self.mod_d
       'method called from module D'
     end
 
   end
 end
 
-#p C::D.mod_d   # ~> NoMethodError: undefined method `mod_d' for C::D:Module
+p C::D.mod_d
 p C::CONST
 p C::D::CONST
+
+# Third Way: Namespace
+module E
+  # E::WAY => 'Namespace'
+  WAY = 'Namespace'.freeze
+
+  # E.way => 'Namespace'
+  def self.way
+    WAY
+  end
+
+  # E::Y
+  class Y
+    def my_method
+      Module.nesting
+      'y_method called'
+    end
+  end
+
+  class X
+
+    def my_method
+      Module.nesting
+      'x_method called'
+    end
+  end
+
+  # E::F
+  module F
+    NAME = self.name.freeze
+  end
+end
+
+module E::J
+  NAME = self.name.freeze
+end
+
+p E::WAY
+p E::Y.new.my_method
+p E::X.new.my_method
+
+p E::J::NAME
