@@ -3,7 +3,7 @@
 # The objects may be constants, methods, classes, or other modules.
 # When a module is used as a container for objects, it’s called a namespace
 module Foo
-  # E::WAY => 'Namespace'
+  # Foo::WAY => 'Namespace'
   TYPE = 'Namespace'.freeze
 
   # Foo.type => 'Namespace'
